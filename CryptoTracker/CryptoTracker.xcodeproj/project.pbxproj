@@ -30,21 +30,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8CA4A5E82F2161FF002B9B89 /* CryptoTracker */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CryptoTracker;
-			sourceTree = "<group>";
-		};
-		8CA4A5F82F216201002B9B89 /* CryptoTrackerTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CryptoTrackerTests;
-			sourceTree = "<group>";
-		};
-		8CA4A6022F216201002B9B89 /* CryptoTrackerUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CryptoTrackerUITests;
-			sourceTree = "<group>";
-		};
 		8CA4A6142F216251002B9B89 /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = App;
@@ -105,9 +90,6 @@
 				8CA4A63D2F2164D1002B9B89 /* Domain */,
 				8CA4A61D2F216297002B9B89 /* Data */,
 				8CA4A6142F216251002B9B89 /* App */,
-				8CA4A5E82F2161FF002B9B89 /* CryptoTracker */,
-				8CA4A5F82F216201002B9B89 /* CryptoTrackerTests */,
-				8CA4A6022F216201002B9B89 /* CryptoTrackerUITests */,
 				8CA4A5E72F2161FF002B9B89 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -138,7 +120,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				8CA4A5E82F2161FF002B9B89 /* CryptoTracker */,
 				8CA4A6142F216251002B9B89 /* App */,
 				8CA4A61D2F216297002B9B89 /* Data */,
 				8CA4A63D2F2164D1002B9B89 /* Domain */,
@@ -165,9 +146,6 @@
 			dependencies = (
 				8CA4A5F72F216201002B9B89 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				8CA4A5F82F216201002B9B89 /* CryptoTrackerTests */,
-			);
 			name = CryptoTrackerTests;
 			packageProductDependencies = (
 			);
@@ -187,9 +165,6 @@
 			);
 			dependencies = (
 				8CA4A6012F216201002B9B89 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				8CA4A6022F216201002B9B89 /* CryptoTrackerUITests */,
 			);
 			name = CryptoTrackerUITests;
 			packageProductDependencies = (

@@ -1,4 +1,6 @@
 import Foundation
+import SwiftUI
+import Combine
 
 @MainActor
 final class SearchViewModel: ObservableObject {
@@ -27,7 +29,7 @@ final class SearchViewModel: ObservableObject {
         do {
             // Quick approach: pull top 250 and filter locally.
             // For production, add CoinGecko /search endpoint with paging.
-            let coins = try await fetchMarket(category: .top100, page: 1, pageSize: 250)
+            let coins = try await fetchMarket(category: .top100, page: 1, perPage: 250)
             let filtered = coins.filter { $0.name.lowercased().contains(q.lowercased()) || $0.symbol.lowercased().contains(q.lowercased()) }
             state = .loaded(filtered)
             saveHistory(q)

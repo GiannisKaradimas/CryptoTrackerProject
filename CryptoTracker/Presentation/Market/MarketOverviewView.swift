@@ -1,36 +1,26 @@
 import SwiftUI
 
 struct MarketOverviewView: View {
-    @EnvironmentObject private var container: AppContainer
-    @StateObject private var vm: MarketOverviewViewModel
-
-    init() {
-        _vm = StateObject(wrappedValue: MarketOverviewViewModel(fetchMarket: AppContainer().fetchMarketCoins))
-        // NOTE: we rebind in .onAppear with real container (Xcode preview friendliness)
-    }
+    @StateObject var vm: MarketOverviewViewModel
 
     var body: some View {
         NavigationStack {
             content
                 .navigationTitle("Market")
+                .searchable(text: $vm.query)
+                .onChange(of: vm.query) { _ in vm.applyQuery() }
                 .toolbar {
                     Menu {
-                        Picker("Category", selection: $vm.category) {
-                            ForEach(MarketCategory.allCases) { cat in
-                                Text(cat.rawValue).tag(cat)
-                            }
-                        }
+                        Button("Top 100") { vm.category = .top100 }
+                        Button("Trending") { vm.category = .trending }
+                        Button("Gainers") { vm.category = .gainers }
+                        Button("Losers") { vm.category = .losers }
                     } label: {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
+                        Label("Category", systemImage: "line.3.horizontal.decrease.circle")
                     }
                 }
-                .searchable(text: $vm.query, prompt: "Search coins")
-                .onChange(of: vm.category) { _, _ in Task { await vm.refresh() } }
-                .onChange(of: vm.query) { _, _ in
-                    // quick local filtering by reloading current state
-                    if case let .loaded(coins) = vm.state { vm.state = .loaded(coins) }
-                }
-                .task { await bindAndLoadIfNeeded() }
+                .task { await vm.loadFirstPage() }
+                .refreshable { await vm.loadFirstPage() }
         }
     }
 
@@ -43,52 +33,34 @@ struct MarketOverviewView: View {
             VStack(spacing: 12) {
                 Image(systemName: "exclamationmark.triangle")
                 Text(err.localizedDescription).multilineTextAlignment(.center)
-                Button("Retry") { Task { await vm.refresh() } }
+                Button("Retry") { Task { await vm.loadFirstPage() } }
             }
             .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         case .loaded(let coins):
-            List(coins) { coin in
-                NavigationLink {
-                    CoinDetailView(coinId: coin.id, coinName: coin.name)
-                } label: {
+            if coins.isEmpty {
+                ContentUnavailableView("No results", systemImage: "magnifyingglass", description: Text("Try another search."))
+            } else {
+                List(coins) { coin in
                     CoinRowView(coin: coin)
+                        .onAppear { Task { await vm.loadMoreIfNeeded(currentItem: coin) } }
                 }
-                .task { await vm.loadMoreIfNeeded(current: coin) }
+                .listStyle(.plain)
             }
-            .listStyle(.plain)
-            .refreshable { await vm.refresh() }
-        }
-    }
-
-    private func bindAndLoadIfNeeded() async {
-        // Rebind use case from the real environment container
-        if vm.state == .idle {
-            vm.objectWillChange.send()
-            // Hacky: create a new VM using real container, preserving user selections.
-            let newVM = MarketOverviewViewModel(fetchMarket: container.fetchMarketCoins)
-            newVM.category = vm.category
-            newVM.query = vm.query
-            _vm.wrappedValue = newVM
-            await newVM.refresh()
         }
     }
 }
 
-private struct CoinRowView: View {
+struct CoinRowView: View {
     let coin: Coin
-
     var body: some View {
         HStack(spacing: 12) {
-            AsyncImage(url: coin.imageURL) { phase in
-                switch phase {
-                case .success(let img):
-                    img.resizable().scaledToFit()
-                default:
-                    RoundedRectangle(cornerRadius: 8).fill(.quaternary)
-                }
+            AsyncImage(url: coin.imageURL) { img in
+                img.resizable().scaledToFit()
+            } placeholder: {
+                ProgressView()
             }
-            .frame(width: 34, height: 34)
+            .frame(width: 32, height: 32)
             .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 2) {
@@ -99,13 +71,13 @@ private struct CoinRowView: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text(coin.price, format: .currency(code: "USD")).font(.headline)
-                if let ch = coin.change24h {
-                    Text(ch / 100, format: .percent)
-                        .font(.caption)
-                        .foregroundStyle(ch >= 0 ? .green : .red)
-                }
+                Text(coin.currentPriceUSD.map { "$" + String(format: "%.2f", $0) } ?? "—")
+                    .font(.headline)
+                Text(coin.priceChange24hPct.map { String(format: "%.2f%%", $0) } ?? "—")
+                    .font(.caption)
+                    .foregroundStyle((coin.priceChange24hPct ?? 0) >= 0 ? .green : .red)
             }
         }
+        .padding(.vertical, 4)
     }
 }

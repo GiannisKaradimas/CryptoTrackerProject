@@ -1,28 +1,29 @@
 import SwiftUI
-import CoreData
 
 struct AlertsView: View {
-    @Environment(\.managedObjectContext) private var ctx
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "createdAt", ascending: false)])
-    private var alerts: FetchedResults<PriceAlert>
+    @EnvironmentObject private var container: AppContainer
 
+    @State private var alerts: [PriceAlertModel] = []
     @State private var showAdd = false
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(alerts, id: \.objectID) { a in
+                ForEach(alerts) { a in
                     HStack {
-                        VStack(alignment: .leading) {
-                            Text(a.coinSymbol ?? "—").font(.headline)
-                            Text("\((a.type ?? "").capitalized) \(a.targetPrice, format: .currency(code: "USD"))")
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(a.symbol).font(.headline)
+                            Text("\(a.type.rawValue.capitalized) \(a.targetPriceUSD, format: .currency(code: "USD"))")
                                 .font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
-                        Toggle("", isOn: Binding(get: { a.isEnabled }, set: { newValue in
-                            a.isEnabled = newValue
-                            try? ctx.save()
-                        }))
+                        Toggle("", isOn: Binding(
+                            get: { a.isEnabled },
+                            set: { newValue in
+                                try? container.alertRepository.setEnabled(id: a.id, isEnabled: newValue)
+                                reload()
+                            }
+                        ))
                         .labelsHidden()
                     }
                 }
@@ -30,34 +31,54 @@ struct AlertsView: View {
             }
             .navigationTitle("Alerts")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) { EditButton() }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showAdd = true } label: { Image(systemName: "plus") }
                 }
-                ToolbarItem(placement: .topBarLeading) { EditButton() }
             }
-            .sheet(isPresented: $showAdd) { AddAlertSheet() }
+            .sheet(isPresented: $showAdd) {
+                AddAlertSheet { model in
+                    try? container.alertRepository.createAlert(
+                        coinId: model.coinId,
+                        symbol: model.symbol,
+                        targetPrice: model.targetPrice,
+                        type: model.type
+                    )
+                    reload()
+                }
+            }
+            .onAppear { reload() }
         }
     }
 
+    private func reload() {
+        alerts = (try? container.alertRepository.allAlerts()) ?? []
+    }
+
     private func delete(at offsets: IndexSet) {
-        offsets.map { alerts[$0] }.forEach(ctx.delete)
-        try? ctx.save()
+        offsets.map { alerts[$0].id }.forEach { id in
+            try? container.alertRepository.deleteAlert(id: id)
+        }
+        reload()
     }
 }
 
 private struct AddAlertSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var container: AppContainer
 
     @State private var coinId = "bitcoin"
     @State private var symbol = "BTC"
     @State private var target = ""
     @State private var type: AlertType = .above
 
+    let onSave: (PriceAlertModel) -> Void
+
     var body: some View {
         NavigationStack {
             Form {
                 TextField("Coin id (CoinGecko)", text: $coinId)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
                 TextField("Symbol", text: $symbol)
                 TextField("Target price (USD)", text: $target).keyboardType(.decimalPad)
                 Picker("Type", selection: $type) {
@@ -72,9 +93,15 @@ private struct AddAlertSheet: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") {
                         let t = Double(target) ?? 0
-                        try? container.alertRepository.createAlert(coinId: coinId, symbol: symbol, targetPrice: t, type: type)
+                        onSave(PriceAlertModel(
+                            coinId: coinId.trimmingCharacters(in: .whitespacesAndNewlines),
+                            symbol: symbol.trimmingCharacters(in: .whitespacesAndNewlines),
+                            targetPrice: t,
+                            type: type
+                        ))
                         dismiss()
-                    }.disabled(Double(target) == nil)
+                    }
+                    .disabled(Double(target) == nil)
                 }
             }
         }

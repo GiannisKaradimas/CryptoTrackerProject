@@ -1,22 +1,36 @@
 import SwiftUI
 
 struct RootTabView: View {
+    @EnvironmentObject private var container: AppContainer
+
     var body: some View {
         TabView {
-            MarketOverviewView()
-                .tabItem { Label("Market", systemImage: "chart.line.uptrend.xyaxis") }
+            // Market
+            MarketOverviewView(
+                vm: MarketOverviewViewModel(fetchMarket: container.fetchMarketCoins)
+            )
+            .tabItem {
+                Label("Market", systemImage: "chart.line.uptrend.xyaxis")
+            }
 
-            SearchView()
-                .tabItem { Label("Search", systemImage: "magnifyingglass") }
-
+            // Watchlists
             WatchlistsView()
-                .tabItem { Label("Watchlists", systemImage: "star") }
+                .tabItem {
+                    Label("Watchlists", systemImage: "star")
+                }
 
+            // Portfolio
             PortfolioView()
-                .tabItem { Label("Portfolio", systemImage: "briefcase") }
+                .tabItem {
+                    Label("Portfolio", systemImage: "briefcase")
+                }
 
+            // Alerts
             AlertsView()
-                .tabItem { Label("Alerts", systemImage: "bell") }
+                .tabItem {
+                    Label("Alerts", systemImage: "bell")
+                }
         }
     }
 }
+

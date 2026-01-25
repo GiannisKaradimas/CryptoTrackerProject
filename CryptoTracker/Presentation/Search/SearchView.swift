@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct SearchView: View {
     @EnvironmentObject private var container: AppContainer
@@ -71,24 +72,43 @@ struct SearchView: View {
 
 private struct CoinGridCard: View {
     let coin: Coin
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 AsyncImage(url: coin.imageURL) { phase in
                     switch phase {
-                    case .success(let img): img.resizable().scaledToFit()
-                    default: RoundedRectangle(cornerRadius: 8).fill(.quaternary)
+                    case .success(let img):
+                        img.resizable().scaledToFit()
+                    default:
+                        RoundedRectangle(cornerRadius: 8).fill(.quaternary)
                     }
                 }
                 .frame(width: 28, height: 28)
+
                 Spacer()
             }
-            Text(coin.name).font(.headline).lineLimit(1)
-            Text(coin.symbol).font(.caption).foregroundStyle(.secondary)
-            Text(coin.price, format: .currency(code: "USD")).font(.subheadline)
+
+            Text(coin.name)
+                .font(.headline)
+                .lineLimit(1)
+
+            Text(coin.symbol)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            if let price = coin.currentPriceUSD {
+                Text(price, format: .currency(code: "USD"))
+                    .font(.subheadline)
+            } else {
+                Text("--")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding()
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
+

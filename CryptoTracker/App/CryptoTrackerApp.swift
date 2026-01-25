@@ -8,7 +8,6 @@ struct CryptoTrackerApp: App {
         WindowGroup {
             RootTabView()
                 .environmentObject(appContainer)
-                .environment(\.managedObjectContext, appContainer.persistence.viewContext)
         }
     }
 }

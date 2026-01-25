@@ -2,22 +2,21 @@ import Foundation
 
 struct FetchMarketCoinsUseCase {
     let repo: CoinRepository
-    func callAsFunction(category: MarketCategory, page: Int, pageSize: Int) async throws -> [Coin] {
-        if category == .trending { return try await repo.trendingCoins() }
-        return try await repo.marketCoins(category: category, page: page, pageSize: pageSize)
+    func callAsFunction(category: MarketCategory, page: Int, perPage: Int) async throws -> [Coin] {
+        try await repo.fetchMarket(category: category, page: page, perPage: perPage)
     }
 }
 
 struct FetchCoinDetailUseCase {
     let repo: CoinRepository
     func callAsFunction(id: String) async throws -> CoinDetail {
-        try await repo.coinDetail(id: id)
+        try await repo.fetchCoinDetail(id: id)
     }
 }
 
 struct FetchCoinHistoryUseCase {
     let repo: CoinRepository
-    func callAsFunction(id: String, days: String) async throws -> [PricePoint] {
-        try await repo.history(id: id, days: days)
+    func callAsFunction(id: String, range: HistoryRange) async throws -> [PricePoint] {
+        try await repo.fetchHistory(id: id, days: range)
     }
 }
