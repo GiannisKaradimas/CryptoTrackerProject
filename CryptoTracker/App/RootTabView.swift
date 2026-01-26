@@ -14,10 +14,11 @@ struct RootTabView: View {
             }
             
             //Search
-            SearchView(fetchMarket: container.fetchMarketCoins)
-                .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
-                }
+            SearchView(
+                fetchMarket: container.fetchMarketCoins,
+                fetchDetail: container.fetchCoinDetail,
+                fetchHistory: container.fetchCoinHistory
+            )
 
             // Watchlists
             WatchlistsView()

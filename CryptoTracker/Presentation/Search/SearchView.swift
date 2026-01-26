@@ -4,10 +4,18 @@ import Foundation
 struct SearchView: View {
     @StateObject private var vm: SearchViewModel
 
-    // Inject the UseCase from RootTabView
-    init(fetchMarket: FetchMarketCoinsUseCase) {
-        _vm = StateObject(wrappedValue: SearchViewModel(fetchMarket: fetchMarket))
-    }
+        private let fetchDetail: FetchCoinDetailUseCase
+        private let fetchHistory: FetchCoinHistoryUseCase
+
+        init(
+            fetchMarket: FetchMarketCoinsUseCase,
+            fetchDetail: FetchCoinDetailUseCase,
+            fetchHistory: FetchCoinHistoryUseCase
+        ) {
+            _vm = StateObject(wrappedValue: SearchViewModel(fetchMarket: fetchMarket))
+            self.fetchDetail = fetchDetail
+            self.fetchHistory = fetchHistory
+        }
 
     var body: some View {
         NavigationStack {
@@ -20,10 +28,8 @@ struct SearchView: View {
                 }
                 .searchable(text: $vm.query, prompt: "Search coins (e.g. bitcoin)")
                 .onSubmit(of: .search) { Task { await vm.search() } }
-
-                }
         }
-    
+    }
 
     @ViewBuilder
     private var content: some View {
@@ -47,7 +53,6 @@ struct SearchView: View {
         case .loaded(let coins):
             if vm.isGrid {
                 gridResults(coins)
-                
             } else {
                 listResults(coins)
             }
@@ -87,13 +92,18 @@ struct SearchView: View {
                 columns: [GridItem(.adaptive(minimum: 160), spacing: 12)],
                 spacing: 12
             ) {
-                // :white_check_mark: explicit id eliminates overload ambiguity
                 ForEach(coins, id: \.id) { coin in
                     NavigationLink {
-                        CoinDetailView(coinId: coin.id, coinName: coin.name)
+                        CoinDetailView(
+                            coinId: coin.id,
+                            coinName: coin.name,
+                            fetchDetail: fetchDetail,
+                            fetchHistory: fetchHistory
+                        )
                     } label: {
                         CoinGridCard(coin: coin)
                     }
+
                 }
             }
             .padding()
@@ -101,12 +111,16 @@ struct SearchView: View {
     }
 
     private func listResults(_ coins: [Coin]) -> some View {
-        // :white_check_mark: explicit id eliminates overload ambiguity
         List(coins, id: \.id) { coin in
             NavigationLink {
-                CoinDetailView(coinId: coin.id, coinName: coin.name)
+                CoinDetailView(
+                    coinId: coin.id,
+                    coinName: coin.name,
+                    fetchDetail: fetchDetail,
+                    fetchHistory: fetchHistory
+                )
             } label: {
-                row(coin)
+                CoinGridCard(coin: coin)
             }
         }
         .listStyle(.plain)

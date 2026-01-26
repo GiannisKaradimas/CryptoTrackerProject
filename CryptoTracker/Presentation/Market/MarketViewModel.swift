@@ -37,7 +37,7 @@ final class MarketViewModel: ObservableObject {
         state = .loading
 
         do {
-            let result = try await fetchMarketCoins(category: category, page: page, pageSize: pageSize)
+            let result = try await fetchMarketCoins(category: category, page: page, perPage: pageSize)
             coins = result
             state = result.isEmpty ? .empty : .loaded
         } catch {
@@ -60,7 +60,7 @@ final class MarketViewModel: ObservableObject {
 
         do {
             page += 1
-            let next = try await fetchMarketCoins(category: category, page: page, pageSize: pageSize)
+            let next = try await fetchMarketCoins(category: category, page: page, perPage: pageSize)
             if !next.isEmpty {
                 coins.append(contentsOf: next)
             }
