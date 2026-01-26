@@ -1,9 +1,25 @@
-
 import SwiftUI
 import Charts
 
 struct CoinDetailView: View {
-    @State var vm: CoinDetailViewModel
+    let coinId: String
+    let coinName: String
+
+    @StateObject private var vm: CoinDetailViewModel
+
+    init(coinId: String,
+         coinName: String,
+         fetchDetail: FetchCoinDetailUseCase,
+         fetchHistory: FetchCoinHistoryUseCase) {
+
+        self.coinId = coinId
+        self.coinName = coinName
+        _vm = StateObject(wrappedValue: CoinDetailViewModel(
+            coinID: coinId,
+            fetchDetail: fetchDetail,
+            fetchHistory: fetchHistory
+        ))
+    }
 
     var body: some View {
         ScrollView {
@@ -13,10 +29,12 @@ struct CoinDetailView: View {
             }
             .padding()
         }
-        .navigationTitle("Details")
+        .navigationTitle(coinName)
         .navigationBarTitleDisplayMode(.inline)
         .task { await vm.load() }
-        .onChange(of: vm.range) { _ in Task { await vm.loadHistory() } }
+        .onChange(of: vm.range, perform: { _ in
+            Task { await vm.loadHistory() }
+        })
     }
 
     @ViewBuilder private var detailSection: some View {

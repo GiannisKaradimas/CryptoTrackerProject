@@ -12,6 +12,12 @@ struct RootTabView: View {
             .tabItem {
                 Label("Market", systemImage: "chart.line.uptrend.xyaxis")
             }
+            
+            //Search
+            SearchView(fetchMarket: container.fetchMarketCoins)
+                .tabItem {
+                    Label("Search", systemImage: "magnifyingglass")
+                }
 
             // Watchlists
             WatchlistsView()

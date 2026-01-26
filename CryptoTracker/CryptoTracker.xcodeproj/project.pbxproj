@@ -29,6 +29,16 @@
 		8CA4A5FF2F216201002B9B89 /* CryptoTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8CA4A7F12F27AF6A002B9B89 /* Exceptions for "Presentation" folder in "CryptoTracker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			platformFiltersByRelativePath = {
+				Search/SearchView.swift = (ios, );
+			};
+			target = 8CA4A5E52F2161FF002B9B89 /* CryptoTracker */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		8CA4A6142F216251002B9B89 /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -47,6 +57,9 @@
 		};
 		8CA4A6442F216553002B9B89 /* Presentation */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8CA4A7F12F27AF6A002B9B89 /* Exceptions for "Presentation" folder in "CryptoTracker" target */,
+			);
 			path = Presentation;
 			sourceTree = "<group>";
 		};

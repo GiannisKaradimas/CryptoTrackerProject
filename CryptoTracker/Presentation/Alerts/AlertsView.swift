@@ -13,7 +13,7 @@ struct AlertsView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(a.symbol).font(.headline)
-                            Text("\(a.type.rawValue.capitalized) \(a.targetPriceUSD, format: .currency(code: "USD"))")
+                            Text("\(a.type.rawValue.capitalized) \(a.targetPrice, format: .currency(code: "USD"))")
                                 .font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
