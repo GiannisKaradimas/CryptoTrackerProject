@@ -35,7 +35,7 @@ final class CoinGeckoAPI {
         }
 
         guard let url = components.url else { throw AppError.network(.invalidURL) }
-        return try await request(url, decode: [MarketCoinDTO].self)
+        return try await request(url, decode: [MarketCoinDTO].self, decodingStrategy: .useDefaultKeys)
     }
 
     func coinDetail(id: String) async throws -> CoinDetailDTO {
@@ -62,13 +62,13 @@ final class CoinGeckoAPI {
         return try await request(url, decode: TrendingDTO.self)
     }
 
-    private func request<T: Decodable>(_ url: URL, decode: T.Type) async throws -> T {
+    private func request<T: Decodable>(_ url: URL, decode: T.Type, decodingStrategy: JSONDecoder.KeyDecodingStrategy = .convertFromSnakeCase) async throws -> T {
         var req = URLRequest(url: url)
         req.httpMethod = "GET"
         req.setValue("application/json", forHTTPHeaderField: "Accept")
 
         let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
+//        decoder.keyDecodingStrategy = .convertFromSnakeCase
 
         let maxAttempts = 3
         var attempt = 0

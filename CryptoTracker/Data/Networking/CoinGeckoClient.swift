@@ -30,43 +30,56 @@ final class CoinGeckoClient {
     }
 
     private func requestWithRetry<T: Decodable>(_ request: URLRequest) async throws -> T {
+
+        print("🔵 Requesting:", request.url?.absoluteString ?? "nil")
+
         var attempt = 0
-        var delay: UInt64 = 400_000_000 // 0.4s
+        var delay: UInt64 = 400_000_000
 
         while true {
             do {
                 let (data, response) = try await session.data(for: request)
-                guard let http = response as? HTTPURLResponse else { throw AppError.network(.invalidResponse) }
+
+                guard let http = response as? HTTPURLResponse else {
+                    throw AppError.network(.invalidResponse)
+                }
+
+                print("🟡 Status Code:", http.statusCode)
 
                 if http.statusCode == 429 {
+                    print("⛔ Rate limited")
                     let retryAfter = http.value(forHTTPHeaderField: "Retry-After").flatMap(Int.init)
                     throw AppError.rateLimited(retryAfterSeconds: retryAfter)
                 }
 
                 guard (200...299).contains(http.statusCode) else {
+                    print("❌ Server error:", http.statusCode)
                     throw AppError.network(.httpStatus(http.statusCode))
                 }
+
+//                print("🟢 Raw JSON Response:")
+//                print(String(data: data, encoding: .utf8) ?? "Invalid UTF8")
 
                 do {
                     let decoder = JSONDecoder()
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    return try decoder.decode(T.self, from: data)
+                    let decoded = try decoder.decode(T.self, from: data)
+                    print("PRASINO", decoded)
+                    return decoded
                 } catch {
+                    print("🔴 JSON DECODING ERROR:", error)
                     throw AppError.decoding
                 }
-            } catch let appErr as AppError {
-                attempt += 1
-                if attempt >= 3 { throw appErr }
-                try await Task.sleep(nanoseconds: delay)
-                delay *= 2
+
             } catch {
                 attempt += 1
-                if attempt >= 3 {
-                    throw AppError.network(.transport(error.localizedDescription))
-                }
+                print("🔁 Retry attempt \(attempt) after error:", error)
+
+                if attempt >= 3 { throw error }
                 try await Task.sleep(nanoseconds: delay)
                 delay *= 2
             }
         }
     }
+
 }

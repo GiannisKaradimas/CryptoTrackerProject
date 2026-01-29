@@ -85,9 +85,15 @@ struct CoinRowView: View {
             VStack(alignment: .trailing, spacing: 2) {
                 Text(coin.currentPriceUSD.map { "$" + String(format: "%.2f", $0) } ?? "—")
                     .font(.headline)
-                Text(coin.priceChange24hPct.map { String(format: "%.2f%%", $0) } ?? "—")
-                    .font(.caption)
-                    .foregroundStyle((coin.priceChange24hPct ?? 0) >= 0 ? .green : .red)
+                if let pct = coin.priceChange24hPct {
+                    Text((pct / 100), format: .percent)
+                        .font(.caption)
+                        .foregroundStyle(pct >= 0 ? .green : .red)
+                } else {
+                    Text("—")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .padding(.vertical, 4)
