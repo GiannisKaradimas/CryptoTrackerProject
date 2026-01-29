@@ -19,6 +19,9 @@ struct RootTabView: View {
                 fetchDetail: container.fetchCoinDetail,
                 fetchHistory: container.fetchCoinHistory
             )
+            .tabItem {
+                Label("Search", systemImage: "magnifyingglass")
+            }
 
             // Watchlists
             WatchlistsView()
