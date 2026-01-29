@@ -39,7 +39,19 @@ struct MarketOverviewView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         case .loaded(let coins):
             if coins.isEmpty {
-//                ContentUnavailableView("No results", systemImage: "magnifyingglass", description: Text("Try another search."))
+                VStack(spacing: 12) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 40))
+                        .foregroundStyle(.secondary)
+
+                    Text("No results")
+                        .font(.headline)
+
+                    Text("Try another search.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(coins) { coin in
                     CoinRowView(coin: coin)
