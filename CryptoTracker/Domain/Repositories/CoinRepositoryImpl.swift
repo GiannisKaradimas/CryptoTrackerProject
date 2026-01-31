@@ -111,7 +111,7 @@ private extension MarketCoinDTO {
             priceChange24hPct: priceChangePercentage24H,
             marketCapUSD: marketCap,
             totalVolumeUSD: totalVolume,
-            sparkline7d: sparklineIn7H?.price
+            sparkline7d: sparklineIn7D?.price
         )
     }
 }
