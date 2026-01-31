@@ -108,10 +108,10 @@ private extension MarketCoinDTO {
             name: name,
             imageURL: image.flatMap(URL.init(string:)),
             currentPriceUSD: currentPrice,
-            priceChange24hPct: priceChangePercentage24h,
+            priceChange24hPct: priceChangePercentage24H,
             marketCapUSD: marketCap,
             totalVolumeUSD: totalVolume,
-            sparkline7d: sparklineIn7d?.price
+            sparkline7d: sparklineIn7H?.price
         )
     }
 }

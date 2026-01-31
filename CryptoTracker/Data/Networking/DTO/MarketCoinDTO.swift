@@ -4,10 +4,10 @@ struct MarketCoinDTO: Decodable {
     let name: String
     let image: String?
     let currentPrice: Double?
-    let priceChangePercentage24h: Double?
+    let priceChangePercentage24H: Double?
     let marketCap: Double?
     let totalVolume: Double?
-    let sparklineIn7d: SparklineDTO?
+    let sparklineIn7H: SparklineDTO?
 
     struct SparklineDTO: Decodable {
         let price: [Double]?
