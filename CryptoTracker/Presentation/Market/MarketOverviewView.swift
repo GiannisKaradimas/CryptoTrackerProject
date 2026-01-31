@@ -55,7 +55,9 @@ struct MarketOverviewView: View {
             } else {
                 List(coins) { coin in
                     CoinRowView(coin: coin)
-                        .onAppear { Task { await vm.loadMoreIfNeeded(currentItem: coin) } }
+                    .task {
+                    await vm.loadMoreIfNeeded(currentItem: coin)
+                    }
                 }
                 .listStyle(.plain)
             }
