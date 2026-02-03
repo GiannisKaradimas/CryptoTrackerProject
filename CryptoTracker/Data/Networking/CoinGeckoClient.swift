@@ -57,8 +57,7 @@ final class CoinGeckoClient {
                     throw AppError.network(.httpStatus(http.statusCode))
                 }
 
-//                print("🟢 Raw JSON Response:")
-//                print(String(data: data, encoding: .utf8) ?? "Invalid UTF8")
+                print("🟢 Raw JSON Response:")
 
                 do {
                     let decoder = JSONDecoder()

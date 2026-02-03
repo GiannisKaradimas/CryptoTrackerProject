@@ -5,7 +5,6 @@ final class CoinRepositoryImpl: CoinRepository {
     init(api: CoinGeckoClient) { self.api = api }
 
     func fetchMarket(category: MarketCategory, page: Int, perPage: Int) async throws -> [Coin] {
-        // Using /coins/markets with ordering; "gainers/losers" done client-side via sorting.
         let items: [MarketCoinDTO] = try await api.get(
             "/coins/markets",
             query: [

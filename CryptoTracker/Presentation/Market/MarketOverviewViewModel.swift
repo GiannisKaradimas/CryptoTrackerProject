@@ -41,9 +41,9 @@ final class MarketOverviewViewModel: ObservableObject {
         if !force, let currentItem, currentItem.id != all.last?.id { return }
 
         do {
-            let new = try await fetchMarket(category: category, page: page, perPage: perPage)
-            if new.isEmpty { canLoadMore = false }
-            all.append(contentsOf: new)
+            let coins = try await fetchMarket(category: category, page: page, perPage: perPage)
+            if coins.isEmpty { canLoadMore = false }
+            all.append(contentsOf: coins)
             page += 1
             state = .loaded(filtered(all))
         } catch let err as AppError {
