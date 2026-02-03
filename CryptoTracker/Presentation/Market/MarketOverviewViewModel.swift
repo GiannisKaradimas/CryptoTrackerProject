@@ -8,14 +8,25 @@ final class MarketOverviewViewModel: ObservableObject {
     @Published var category: MarketCategory = .top100
 
     private let fetchMarket: FetchMarketCoinsUseCase
+    private let fetchDetail: FetchCoinDetailUseCase
+    private let fetchHistory: FetchCoinHistoryUseCase
     private var page = 1
     private let perPage = 50
     private var canLoadMore = true
     private var all: [Coin] = []
 
-    init(fetchMarket: FetchMarketCoinsUseCase) {
-        self.fetchMarket = fetchMarket
-    }
+    init(
+            fetchMarket: FetchMarketCoinsUseCase,
+            fetchDetail: FetchCoinDetailUseCase,
+            fetchHistory: FetchCoinHistoryUseCase
+        ) {
+            self.fetchMarket = fetchMarket
+            self.fetchDetail = fetchDetail
+            self.fetchHistory = fetchHistory
+        }
+    
+    var detailUseCase: FetchCoinDetailUseCase { fetchDetail }
+    var historyUseCase: FetchCoinHistoryUseCase { fetchHistory }
 
     func loadFirstPage() async {
         page = 1

@@ -95,15 +95,13 @@ struct SearchView: View {
                 ForEach(coins, id: \.id) { coin in
                     NavigationLink {
                         CoinDetailView(
-                            coinId: coin.id,
-                            coinName: coin.name,
+                            coin: coin,
                             fetchDetail: fetchDetail,
                             fetchHistory: fetchHistory
                         )
                     } label: {
                         CoinGridCard(coin: coin)
                     }
-
                 }
             }
             .padding()
@@ -114,8 +112,7 @@ struct SearchView: View {
         List(coins, id: \.id) { coin in
             NavigationLink {
                 CoinDetailView(
-                    coinId: coin.id,
-                    coinName: coin.name,
+                    coin: coin,
                     fetchDetail: fetchDetail,
                     fetchHistory: fetchHistory
                 )

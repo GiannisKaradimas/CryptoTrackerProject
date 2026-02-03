@@ -7,7 +7,11 @@ struct RootTabView: View {
         TabView {
             // Market
             MarketOverviewView(
-                vm: MarketOverviewViewModel(fetchMarket: container.fetchMarketCoins)
+                vm: MarketOverviewViewModel(
+                    fetchMarket: container.fetchMarketCoins,
+                    fetchDetail: container.fetchCoinDetail,
+                    fetchHistory: container.fetchCoinHistory
+                )
             )
             .tabItem {
                 Label("Market", systemImage: "chart.line.uptrend.xyaxis")
