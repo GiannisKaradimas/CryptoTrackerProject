@@ -1,11 +1,3 @@
-//
-//  WatchlistModel.swift
-//  CryptoTracker
-//
-//  Created by ioannis.karadimas on 23/1/26.
-//
-
-
 import Foundation
 
 struct WatchlistModel: Identifiable, Codable, Equatable {

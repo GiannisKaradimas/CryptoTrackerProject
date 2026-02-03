@@ -54,9 +54,17 @@ struct MarketOverviewView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(coins) { coin in
-                    CoinRowView(coin: coin)
+                    NavigationLink {
+                        CoinDetailView(
+                            coin: coin,
+                            fetchDetail: vm.fetchDetail,
+                            fetchHistory: vm.fetchHistory
+                        )
+                    } label: {
+                        CoinRowView(coin: coin)
+                    }
                     .task {
-                    await vm.loadMoreIfNeeded(currentItem: coin)
+                        await vm.loadMoreIfNeeded(currentItem: coin)
                     }
                 }
                 .listStyle(.plain)

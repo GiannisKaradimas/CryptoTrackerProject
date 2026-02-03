@@ -7,7 +7,6 @@ final class WatchlistsViewModel: ObservableObject {
     @Published private(set) var watchlists: [WatchlistModel] = []
     @Published private(set) var selectedWatchlist: WatchlistModel?
 
-    // Inputs for UI
     @Published var newWatchlistName: String = ""
     @Published var coinIdToAdd: String = ""
 
@@ -17,7 +16,6 @@ final class WatchlistsViewModel: ObservableObject {
         self.repo = repo
     }
 
-    // MARK: - Read
 
     func loadAll() {
         watchlists = (try? repo.allWatchlists()) ?? []
@@ -27,8 +25,6 @@ final class WatchlistsViewModel: ObservableObject {
         let all = (try? repo.allWatchlists()) ?? []
         selectedWatchlist = all.first(where: { $0.id == id })
     }
-
-    // MARK: - Watchlists CRUD
 
     func createWatchlist(name: String) {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -46,7 +42,6 @@ final class WatchlistsViewModel: ObservableObject {
         loadAll()
     }
 
-    // MARK: - Coins in Watchlist
 
     func addCoin(to watchlistId: UUID) {
         let id = coinIdToAdd.trimmingCharacters(in: .whitespacesAndNewlines)

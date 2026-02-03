@@ -16,7 +16,14 @@ struct CoinDetailDTO: Decodable {
         let marketCap: [String: Double]?
         let totalVolume: [String: Double]?
         let circulatingSupply: Double?
+        let maxSupply: Double?
+
         let ath: [String: Double]?
         let atl: [String: Double]?
+
+        let priceChangePercentage24h: Double?
+        let priceChangePercentage7d: Double?
+        let priceChangePercentage30d: Double?
+        let priceChangePercentage1y: Double?
     }
 }

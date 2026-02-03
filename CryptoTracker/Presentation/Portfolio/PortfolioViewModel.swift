@@ -12,13 +12,9 @@ final class PortfolioViewModel: ObservableObject {
         self.repo = repo
     }
 
-    // MARK: - Read
-
     func load() {
         holdings = (try? repo.allHoldings()) ?? []
     }
-
-    // MARK: - Write
 
     func addHolding(_ holding: HoldingModel) {
         try? repo.addHolding(holding)
@@ -33,8 +29,6 @@ final class PortfolioViewModel: ObservableObject {
             }
         load()
     }
-
-    // MARK: - Derived values (useful for summary card)
 
     var totalCostUSD: Double {
         holdings.reduce(0) { $0 + ($1.quantity * $1.purchasePrice) }

@@ -115,7 +115,7 @@ private struct AddHoldingSheet: View {
                                 name: trimmedName,
                                 quantity: Double(qty) ?? 0,
                                 purchasePrice: Double(price) ?? 0,
-                                createdAt: Date()          // ✅ correct label
+                                createdAt: Date()
                             )
                         )
                         dismiss()

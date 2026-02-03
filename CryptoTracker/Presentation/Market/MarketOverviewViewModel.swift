@@ -8,8 +8,8 @@ final class MarketOverviewViewModel: ObservableObject {
     @Published var category: MarketCategory = .top100
 
     private let fetchMarket: FetchMarketCoinsUseCase
-    private let fetchDetail: FetchCoinDetailUseCase
-    private let fetchHistory: FetchCoinHistoryUseCase
+    let fetchDetail: FetchCoinDetailUseCase
+    let fetchHistory: FetchCoinHistoryUseCase
     private var page = 1
     private let perPage = 50
     private var canLoadMore = true

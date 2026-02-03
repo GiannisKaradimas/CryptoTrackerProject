@@ -10,7 +10,12 @@ struct CoinDetail: Equatable {
     let marketCapUSD: Double?
     let volumeUSD: Double?
     let circulatingSupply: Double?
+    let maxSupply: Double?
     let athUSD: Double?
     let atlUSD: Double?
-}
 
+    let priceChange24h: Double?
+    let priceChange7d: Double?
+    let priceChange30d: Double?
+    let priceChange1y: Double?
+}

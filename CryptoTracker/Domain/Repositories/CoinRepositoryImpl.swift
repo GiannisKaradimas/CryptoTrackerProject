@@ -36,7 +36,6 @@ final class CoinRepositoryImpl: CoinRepository {
         let ids = trending.coins.map { $0.item.id }
         guard !ids.isEmpty else { return [] }
 
-        // IMPORTANT: trending endpoint doesn’t give prices; fetch markets by ids.
         let items: [MarketCoinDTO] = try await api.get(
             "coins/markets",
             query: [
@@ -121,14 +120,20 @@ private extension CoinDetailDTO {
             id: id,
             name: name,
             symbol: symbol.uppercased(),
-            imageURL: image?.large.flatMap(URL.init(string:)),
+            imageURL: image?.large.flatMap(URL.init),
             description: description?.en,
-            homepageURL: links?.homepage?.first.flatMap { URL(string: $0) },
+            homepageURL: links?.homepage?.first.flatMap(URL.init),
             marketCapUSD: marketData?.marketCap?["usd"],
             volumeUSD: marketData?.totalVolume?["usd"],
             circulatingSupply: marketData?.circulatingSupply,
+            maxSupply: marketData?.maxSupply,
             athUSD: marketData?.ath?["usd"],
-            atlUSD: marketData?.atl?["usd"]
+            atlUSD: marketData?.atl?["usd"],
+            
+            priceChange24h: marketData?.priceChangePercentage24h,
+            priceChange7d: marketData?.priceChangePercentage7d,
+            priceChange30d: marketData?.priceChangePercentage30d,
+            priceChange1y: marketData?.priceChangePercentage1y
         )
     }
 }
